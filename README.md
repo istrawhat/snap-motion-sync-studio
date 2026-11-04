@@ -100,7 +100,7 @@ The **Drive** tab works without the helper. The **Link** tab and sending Drive f
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/snap-motion-sync-studio.git ~/Applications/Snap
+git clone https://github.com/istrawhat/snap-motion-sync-studio.git ~/Applications/Snap
 ```
 
 Or download the ZIP from GitHub and unzip it.
