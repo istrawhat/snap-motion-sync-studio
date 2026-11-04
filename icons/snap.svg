@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#7B6BFF"/>
+      <stop offset="0.6" stop-color="#5236F0"/>
+      <stop offset="1" stop-color="#C13BE8"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0.28" cy="0.1" r="0.8">
+      <stop offset="0" stop-color="#fff" stop-opacity=".42"/>
+      <stop offset="0.55" stop-color="#fff" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#1A0E66" flood-opacity=".4"/>
+    </filter>
+  </defs>
+  <path d="M64 4C108 4 124 20 124 64S108 124 64 124 4 108 4 64 20 4 64 4Z" fill="url(#bg)"/>
+  <path d="M64 4C108 4 124 20 124 64S108 124 64 124 4 108 4 64 20 4 64 4Z" fill="url(#shine)"/>
+  <g filter="url(#sh)" fill="#fff">
+    <!-- lightning bolt -->
+    <path d="M72.5 20.5 43.6 61.2a3 3 0 0 0 2.45 4.74H60.5l-6.3 24.9c-.62 2.45 2.5 3.95 4 1.92l28.7-39.7a3 3 0 0 0-2.43-4.76H70.2l6.6-25.9c.63-2.47-2.6-3.92-4.3-1.84Z"/>
+    <!-- tray -->
+    <path d="M28 82a5 5 0 0 1 5 5v8h62v-8a5 5 0 0 1 10 0v10a9 9 0 0 1-9 9H32a9 9 0 0 1-9-9V87a5 5 0 0 1 5-5Z" opacity=".95"/>
+  </g>
+</svg>

@@ -1,0 +1,51 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #111318; color: #e9ebf1;
+  font: 14px/1.55 "Google Sans Text", Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+header img { border-radius: 9px; }
+h1 { font-size: 20px; margin: 0; font-weight: 650; letter-spacing: -.01em; }
+h2 { font-size: 15px; margin: 0 0 10px; font-weight: 650; }
+p { margin: 0 0 12px; }
+a { color: #a99cff; }
+.muted { color: #8a90a2; }
+.small { font-size: 12.5px; }
+section { background: #151820; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.steps { margin: 0 0 16px; padding-left: 20px; }
+.steps li { margin-bottom: 4px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12.5px; color: #aab0c0; margin-bottom: 5px; }
+input[type=text] { width: 100%; height: 38px; border-radius: 8px; border: 1px solid rgba(255,255,255,.12); background: #1b1f29;
+  color: #fff; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 0 10px; }
+.copyrow { display: flex; gap: 8px; align-items: center; }
+code { font: 12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #1b1f29; border: 1px solid rgba(255,255,255,.08);
+  padding: 6px 9px; border-radius: 6px; overflow-wrap: anywhere; }
+.copyrow code { flex: 1; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.grid { display: grid; grid-template-columns: 1fr auto; gap: 12px 16px; align-items: center; margin-bottom: 10px; }
+select { background: #1b1f29; color: #e9ebf1; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; font: inherit; font-size: 13px; padding: 6px 8px; max-width: 320px; }
+input[type=checkbox] { width: 16px; height: 16px; accent-color: #6a5cf6; justify-self: end; }
+.btn { height: 36px; padding: 0 14px; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.btn.small { height: 30px; padding: 0 10px; font-size: 12px; }
+.btn.primary { background: #6a5cf6; color: #fff; } .btn.primary:hover { background: #7c6dfa; }
+.btn.secondary { background: #1f2430; color: #e9ebf1; border-color: rgba(255,255,255,.1); } .btn.secondary:hover { background: #262c3a; }
+.btn:disabled { opacity: .5; cursor: default; }
+:focus-visible { outline: 2px solid #a99cff; outline-offset: 2px; }
+#account.ok { color: #3ecf8e; } #account.bad { color: #ff8f8f; }
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1f2430; border: 1px solid rgba(255,255,255,.1);
+  padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+#toast.on { opacity: 1; }
+@media (max-width: 520px) { .grid { grid-template-columns: 1fr; } input[type=checkbox] { justify-self: start; } }
+.choices { display: grid; gap: 8px; margin-bottom: 14px; }
+.choice { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid rgba(255,255,255,.08); border-radius: 9px; cursor: pointer; background: #1b1f29; }
+.choice:has(input:checked) { border-color: rgba(107,151,255,.6); background: rgba(106,92,246,.1); }
+.choice input { margin-top: 3px; accent-color: #6a5cf6; }
+.grid input[type=text], .grid input[type=password] { width: 260px; max-width: 100%; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,.12);
+  background: #1b1f29; color: #fff; font: 12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 0 9px; }
+details { background: #151820; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; margin-bottom: 16px; }
+summary { padding: 16px 20px; cursor: pointer; font-weight: 650; font-size: 15px; }
+section.inner { border: 0; margin: 0; padding-top: 0; }
+#account.ok { color: #3ecf8e; } #account.bad { color: #ff8f8f; }
+.by { color: #8a90a2; font-weight: 500; }
+.mgr { font-size: 15px; font-weight: 600; }
+.mgr.ok { color: #3ecf8e; }

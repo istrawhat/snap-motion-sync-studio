@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Snap by Motion Sync Studio</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img class="logo" src="../../icons/icon48.png" alt="">
+    <div><span class="name">Snap</span><span class="by">by Motion Sync Studio</span></div>
+  </div>
+  <div class="seg" role="tablist">
+    <button data-mode="link" role="tab">Link</button>
+    <button data-mode="drive" role="tab">Drive</button>
+    <button data-mode="activity" role="tab">Activity<span class="dot" id="active-count" hidden></span></button>
+  </div>
+</header>
+
+<!-- Link: any video/social link → pick quality → Motrix -->
+<div id="link-mode" hidden>
+  <div class="search">
+    <svg class="search-icon" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.66 0l3-3a4 4 0 00-5.66-5.66l-1 1M14 10a4 4 0 00-5.66 0l-3 3a4 4 0 005.66 5.66l1-1"/></svg>
+    <input id="url" type="text" placeholder="Paste a video link…" spellcheck="false" autocomplete="off">
+    <button id="tab" class="ghost" title="Use the page you're on">This tab</button>
+  </div>
+  <main id="view"></main>
+  <footer>
+    <label class="switch" title="Use your Chrome login for private Facebook / Instagram posts">
+      <input id="cookies" type="checkbox"><i></i><span>Use my Chrome login</span>
+    </label>
+  </footer>
+</div>
+
+<!-- Drive: Google Drive folder → individual files, no ZIP -->
+<div id="drive-mode" hidden>
+  <main>
+    <div class="drive-card">
+      <div class="drive-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></div>
+      <div class="lines">
+        <div class="title" id="folder">…</div>
+        <div class="meta" id="page">…</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div><span class="k">Found</span><span class="v" id="found">—</span></div>
+      <div><span class="k">Sends to</span><span class="v" id="dest">…</span></div>
+      <div><span class="k">ZIP files</span><span class="v">0</span></div>
+    </div>
+    <p id="headline" class="headline" hidden></p>
+    <p id="note" class="note" hidden></p>
+    <div class="drive-actions" id="actions"></div>
+    <p class="hint">Downloads every file in a Drive folder on its own, with its original name. No 2 GB ZIP parts.</p>
+  </main>
+  <footer><button class="link" id="settings">Drive settings</button></footer>
+</div>
+
+<!-- Activity: live progress of downloads, joining and converting -->
+<div id="activity-mode" hidden>
+  <main>
+    <div class="jobs" id="jobs"></div>
+  </main>
+  <footer><span class="faint" id="jobs-note">Updates live</span><button class="link" id="clear-jobs">Clear finished</button></footer>
+</div>
+
+<template id="t-empty">
+  <section class="empty">
+    <div class="empty-art"><svg viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg></div>
+    <h2>Copy a link, open Snap</h2>
+    <p>YouTube, Facebook, Instagram, X, TikTok and 1,000+ sites. Plain file links go straight to Motrix.</p>
+  </section>
+</template>
+
+<template id="t-loading">
+  <section>
+    <div class="media skeleton"><div class="thumb"></div><div class="lines"><b></b><b></b><b class="short"></b></div></div>
+    <div class="list skeleton-list"><div></div><div></div><div></div><div></div></div>
+  </section>
+</template>
+
+<template id="t-result">
+  <section>
+    <div class="media">
+      <div class="thumb"><img alt=""><span class="duration"></span></div>
+      <div class="lines"><div class="title"></div><div class="meta"></div></div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button data-tab="video" class="active">Video</button>
+      <button data-tab="audio">Audio</button>
+      <span class="spacer"></span>
+      <label class="check"><input id="all" type="checkbox"> All formats</label>
+    </div>
+    <div class="list"></div>
+    <div class="convert" id="convert-row" hidden>
+      <div class="convert-head"><b>After download</b><span id="convert-est"></span></div>
+      <div class="convert-opts">
+        <button data-convert="">Keep as is<small>Fastest</small></button>
+        <button data-convert="hevc">H.265<small>Fast · plays on Apple, phones, TVs</small></button>
+        <button data-convert="h264">H.264<small>Slower · plays everywhere</small></button>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="raw" class="link">Send raw link</button>
+      <button id="download" class="primary"><span>Download</span><small></small></button>
+    </div>
+  </section>
+</template>
+
+<template id="t-message">
+  <section class="message">
+    <div class="badge"></div>
+    <h2></h2>
+    <p></p>
+    <button class="secondary again">Download another</button>
+  </section>
+</template>
+
+<script src="popup.js"></script>
+</body>
+</html>

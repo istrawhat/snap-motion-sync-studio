@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "Snap by Motion Sync Studio",
+  "short_name": "Snap",
+  "version": "2.4.1",
+  "description": "Download from YouTube, Facebook, Instagram and 1,000+ sites in the quality you pick, and whole Google Drive folders as individual files. No ZIPs. Sends to Motrix.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqgNkx5wYu92csmPerdgs89PpPwL/miwdrmCmE/C/4lTAVjNlfvlz/P1NamCpUMw3cfN984IH0I+eGVH4yk4ZLooqfpRMrtVTKTSWNBuF0sMhbSdmGKh3IIHub7RCwTQqQf1llXDsUahjTmyjrXxDtWDQBTfOOvs1chPL0IOhIGDfpssvHCOneNhu2QQjpD/jOpO4Wv872dFYolQ/MyNGWAyUWt6ibgCr1Uf63EWuCGdTipaPVneMv0UNBQux1kc9OOZDPVGyJOTfYvlSw+LaglxsGCjS8c7lS71MtklNHbLISySFeI1SBBrUN8THeIPa70bOmt3SRh+x1S5Qf9x7VQIDAQAB",
+  "permissions": [
+    "downloads",
+    "storage",
+    "management",
+    "identity",
+    "nativeMessaging",
+    "contextMenus",
+    "activeTab",
+    "notifications",
+    "clipboardRead",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://drive.google.com/*",
+    "https://drive.usercontent.google.com/*",
+    "https://docs.google.com/*",
+    "https://*.googleusercontent.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://drive.google.com/*"
+      ],
+      "js": [
+        "src/content/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Snap by Motion Sync Studio",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "options_page": "src/options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
