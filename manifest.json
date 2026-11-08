@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Snap by Motion Sync Studio",
   "short_name": "Snap",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Download from YouTube, Facebook, Instagram and 1,000+ sites in the quality you pick, and whole Google Drive folders as individual files. No ZIPs. Sends to Motrix.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqgNkx5wYu92csmPerdgs89PpPwL/miwdrmCmE/C/4lTAVjNlfvlz/P1NamCpUMw3cfN984IH0I+eGVH4yk4ZLooqfpRMrtVTKTSWNBuF0sMhbSdmGKh3IIHub7RCwTQqQf1llXDsUahjTmyjrXxDtWDQBTfOOvs1chPL0IOhIGDfpssvHCOneNhu2QQjpD/jOpO4Wv872dFYolQ/MyNGWAyUWt6ibgCr1Uf63EWuCGdTipaPVneMv0UNBQux1kc9OOZDPVGyJOTfYvlSw+LaglxsGCjS8c7lS71MtklNHbLISySFeI1SBBrUN8THeIPa70bOmt3SRh+x1S5Qf9x7VQIDAQAB",
   "permissions": [

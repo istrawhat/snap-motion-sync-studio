@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.0
+- Editor-ready by default: "After download" now defaults to **H.264**, so AV1/VP9 videos (Facebook's 1080p, YouTube's 4K) open in Premiere Pro, After Effects and Final Cut. Applies to single files and the right-click menu too.
+- Facebook: its ready-made "HD"/"SD" H.264 files are now listed (Snap probes files a site doesn't describe), with real sizes.
+- Facebook file names come from the post caption instead of "Video".
+- Right-click on a YouTube or Facebook video no longer sends an unusable blob: link.
+
 ## 2.4.1
 - X/Twitter: videos now download with sound. X lists its MP4 files without codec details, and Snap used to skip them for video-only streams.
 - Portrait videos (X, TikTok, Reels) are labelled by their short side, e.g. 1080p instead of 1920p.

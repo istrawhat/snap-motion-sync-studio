@@ -102,7 +102,7 @@ function renderResult() {
     });
     el.querySelectorAll(".convert-opts button").forEach((b) => (b.onclick = () => {
       state.convert = b.dataset.convert;
-      chrome.storage.local.set({ convertTo: state.convert });
+      chrome.storage.local.set({ afterDownload: state.convert });
       renderConvert();
     }));
     $("#all", el).onchange = (e) => { state.all = e.target.checked; chrome.storage.local.set({ all: state.all }); state.selected = null; renderResult(); };
@@ -156,7 +156,7 @@ function renderList() {
   setButton("Download", formatSize(state.selected.size, state.selected.approx));
   $("#download").disabled = false;
   const sel = state.selected;
-  const canConvert = sel.kind === "video" && !["H.264", "H.265"].includes(sel.codec) && sel.parts.length === 2 && sel.parts.every((p) => p.http);
+  const canConvert = sel.kind === "video" && !["H.264", "H.265"].includes(sel.codec) && sel.parts.every((p) => p.http);
   $("#convert-row").hidden = !canConvert;
   if (canConvert) renderConvert();
 }
@@ -171,8 +171,9 @@ function renderConvert() {
   const est = $("#convert-est");
   if (!state.convert) { est.textContent = formatSize(sel.size, sel.approx); return; }
   const [video, audio] = sel.parts;
-  const vbytes = video.filesize || sel.size;
-  const size = vbytes * SIZE_FACTOR[state.convert] + (audio.filesize || 0);
+  const abytes = audio ? audio.filesize || 0 : 0;
+  const vbytes = (video.filesize || sel.size) - (audio ? 0 : abytes);
+  const size = vbytes * SIZE_FACTOR[state.convert] + abytes;
   const height = parseInt(sel.label, 10) || 1080;
   const fps = parseInt(sel.label.split("p")[1], 10) || 30;
   const encodeFps = ENCODE_FPS_4K[state.convert] * Math.max(1, (2160 * 2160) / (height * height));
@@ -409,10 +410,11 @@ function setMode(mode) {
 }
 document.querySelectorAll(".seg button").forEach((b) => (b.onclick = () => setMode(b.dataset.mode)));
 
-chrome.storage.local.get({ cookies: false, all: false, convertTo: "" }, async (s) => {
+// Default: AV1/VP9 videos become H.264, which every editor (Premiere, After Effects, Final Cut) reads.
+chrome.storage.local.get({ cookies: false, all: false, afterDownload: "h264" }, async (s) => {
   $("#cookies").checked = s.cookies;
   state.all = s.all;
-  state.convert = s.convertTo;
+  state.convert = s.afterDownload;
   refreshJobs();
   [drive.tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   drive.onDrive = !!drive.tab?.url?.startsWith("https://drive.google.com/");

@@ -11,7 +11,7 @@
 <p align="center">
   <img alt="macOS" src="https://img.shields.io/badge/macOS-Apple%20Silicon%20%26%20Intel-111?logo=apple">
   <img alt="Chrome MV3" src="https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white">
-  <img alt="Version" src="https://img.shields.io/badge/version-2.4.1-6a5cf6">
+  <img alt="Version" src="https://img.shields.io/badge/version-2.5.0-6a5cf6">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
@@ -54,7 +54,7 @@
 - **Optional conversion after download**, using your Mac's hardware encoder:
   - **Keep as is**: fastest.
   - **H.265**: about 1.7× faster than H.264 and a smaller file. Plays on Apple devices, phones, smart TVs and Windows 10/11.
-  - **H.264**: plays everywhere, including older players and editors.
+  - **H.264** (default): opens in Premiere Pro, After Effects, Final Cut and DaVinci Resolve, and plays everywhere.
   - Snap shows the estimated final size and conversion time before you start.
 - **Fast downloads.** Snap requests YouTube streams the way YouTube's own player does, so they aren't throttled. A 146 MB 4K video downloads in about 15 seconds on a fast connection.
 - **Private posts.** Turn on **Use my Chrome login** for Facebook and Instagram posts that need you to be signed in.

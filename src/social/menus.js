@@ -26,9 +26,11 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(async (info) => {
   const mode = { 'snap-best': 'best', 'snap-audio': 'audio' }[info.menuItemId];
   if (!mode) return;
-  const url = info.linkUrl || info.srcUrl || info.pageUrl;
-  const { cookies } = await chrome.storage.local.get({ cookies: false });
-  const res = await sendToHost({ url, mode, cookies });
+  // A video element's source is often a blob: URL (YouTube, Facebook) that only exists inside the page.
+  const src = info.srcUrl && /^https?:/.test(info.srcUrl) ? info.srcUrl : null;
+  const url = info.linkUrl || src || info.pageUrl;
+  const { cookies, afterDownload } = await chrome.storage.local.get({ cookies: false, afterDownload: 'h264' });
+  const res = await sendToHost({ url, mode, cookies, convert: afterDownload });
   if (res.ok) watchJobs();
   chrome.notifications.create({
     type: 'basic',

@@ -331,11 +331,14 @@ def send_single(title, f, convert=""):
     headers = dict(f.get("http_headers") or {})
     if f.get("cookies"):
         headers["Cookie"] = f["cookies"]
-    out = safe_name(title) + "." + (f.get("ext") or "mp4")
+    name = safe_name(title)
+    ext = f.get("ext") or "mp4"
+    out = "%s [original, converts automatically].%s" % (name, ext) if convert else "%s.%s" % (name, ext)
     wait_available(f)
     gid = add_to_motrix(f["url"], out, headers, media=True, size=f.get("filesize"))
     path = os.path.join(rpc("aria2.getOption", [gid])["dir"], out)
-    start_job(title, [gid, path, str(f.get("filesize") or 0)], path, convert, f.get("filesize") or 0)
+    output = os.path.join(os.path.dirname(path), name + ".mp4") if convert else path
+    start_job(title, [gid, path, str(f.get("filesize") or 0)], output, convert, f.get("filesize") or 0)
 
 
 def probe_codec(path):
@@ -409,8 +412,44 @@ def size_of(*fs):
     return sum(f.get("filesize") or f.get("filesize_approx") or 0 for f in fs), not exact
 
 
+def probe_unknown(formats):
+    """Some sites (Facebook "hd"/"sd") don't say what's in a file. A quick ffprobe of the URL
+    reads its codec, resolution and size from the first few kilobytes."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    def probe(f):
+        headers = "".join("%s: %s\r\n" % kv for kv in (f.get("http_headers") or {}).items())
+        try:
+            p = subprocess.run(["ffprobe", "-v", "error", "-headers", headers, "-show_entries",
+                                "stream=codec_type,codec_name,width,height:format=size", "-of", "json", f["url"]],
+                               capture_output=True, text=True, timeout=15)
+            data = json.loads(p.stdout or "{}")
+        except Exception:
+            return
+        streams = data.get("streams") or []
+        v = next((x for x in streams if x.get("codec_type") == "video"), None)
+        a = next((x for x in streams if x.get("codec_type") == "audio"), None)
+        if v:
+            f.update(vcodec={"h264": "avc1", "hevc": "hvc1", "av1": "av01", "vp9": "vp09"}.get(v["codec_name"], v["codec_name"]),
+                     width=v.get("width"), height=v.get("height"))
+        f["acodec"] = ("mp4a" if a["codec_name"] == "aac" else a["codec_name"]) if a else "none"
+        if (data.get("format") or {}).get("size") and not f.get("filesize"):
+            f["filesize"] = int(data["format"]["size"])
+
+    todo = [f for f in formats if is_http(f) and not has(f, "vcodec") and not lacks(f, "vcodec")
+            and not f.get("height") and f.get("ext") in ("mp4", "mov", "webm", "mkv")][:6]
+    if todo:
+        with ThreadPoolExecutor(len(todo)) as pool:
+            list(pool.map(probe, todo))
+
+
 def build_choices(info):
     formats = [f for f in info.get("formats") or [info] if f.get("url")]
+    probe_unknown(formats)
+    duration = info.get("duration") or 0
+    for f in formats:  # sites that give a bitrate but no size (Facebook's AV1): estimate it
+        if not f.get("filesize") and not f.get("filesize_approx") and f.get("tbr") and duration:
+            f["filesize_approx"] = int(f["tbr"] * 1000 / 8 * duration)
     audio_key = lambda f: (f.get("language_preference") or -1, f.get("abr") or f.get("tbr") or 0)
     audios = sorted((f for f in formats if lacks(f, "vcodec") and not lacks(f, "acodec")
                      and "drc" not in str(f.get("format_id"))), key=audio_key, reverse=True)
@@ -493,6 +532,21 @@ def run_ytdlp_json(url, cookies, extra):
     return None, {"ok": False, "error": err}
 
 
+def clean_title(info):
+    title = (info.get("title") or "").strip()
+    if info.get("extractor_key", "").lower().startswith("facebook"):
+        title = re.sub(r"^[\d.,]+[KMB]? views?\s*·\s*[\d.,]+[KMB]? reactions?\s*\|\s*", "", title)
+        uploader = info.get("uploader") or ""
+        if uploader and title.endswith("| " + uploader):
+            title = title[: -len(uploader) - 2].strip(" |")
+        title = re.split(r"\s#\w", title)[0].strip()  # drop the hashtag tail
+    if not title or title.lower() in ("video", "reel"):
+        title = " ".join(x for x in (info.get("uploader"), info.get("id")) if x) or "Video"
+    if len(title) > 80:
+        title = title[:80].rsplit(" ", 1)[0] + "…"
+    return title.rstrip(" .|·,")
+
+
 def list_qualities(url, cookies):
     info, fail = run_ytdlp_json(url, cookies, [])
     if fail:
@@ -503,7 +557,7 @@ def list_qualities(url, cookies):
     choices = build_choices(info)
     if not choices:
         return {"ok": True, "direct": True}
-    return {"ok": True, "title": info.get("title"), "thumbnail": info.get("thumbnail"),
+    return {"ok": True, "title": clean_title(info), "thumbnail": info.get("thumbnail"),
             "duration": info.get("duration"), "site": info.get("extractor_key"), "choices": choices}
 
 
@@ -528,13 +582,13 @@ def grab_choice(url, cookies, title, choice, convert=""):
     if not all(p.get("http") for p in parts):
         return download_with_ytdlp(url, cookies, choice["fmt"])
     ensure_motrix()
+    convert = convert if convert in ENCODER and choice.get("kind") == "video" and choice.get("codec") not in ("H.264", "H.265") else ""
     if len(parts) == 1:
-        send_single(title, parts[0])
+        send_single(title, parts[0], convert)
     else:
-        convert = convert if convert in ENCODER and choice.get("codec") not in ("H.264", "H.265") else ""
         send_merged(title, parts[0], parts[1], convert)
-        if convert:
-            return "Sent to Motrix: %s, will be converted to %s MP4" % (choice["label"], "H.264" if convert == "h264" else "H.265")
+    if convert:
+        return "Sent to Motrix: %s, will be converted to %s MP4" % (choice["label"], "H.264" if convert == "h264" else "H.265")
     return "Sent to Motrix: %s %s %s" % (choice["label"], choice["codec"], choice["ext"])
 
 
@@ -544,6 +598,7 @@ def _q(s):
 
 def handle(msg):
     url, mode, cookies = msg.get("url", "").strip(), msg.get("mode", "best"), bool(msg.get("cookies"))
+    convert = msg.get("convert") if msg.get("convert") in ENCODER else ""
     log("request", msg.get("action", mode), url)
     if msg.get("action") == "list":
         return list_qualities(url, cookies)
@@ -585,8 +640,9 @@ def handle(msg):
             if not all(is_http(f) for f in parts):
                 fallback = True
                 continue
-            send_merged(e.get("title"), parts[0], parts[1])
-            sent.append(e.get("title") or "file")
+            needs = convert if mode == "best" and codec_name(parts[0].get("vcodec")) not in ("H.264", "H.265") else ""
+            send_merged(clean_title(e), parts[0], parts[1], needs)
+            sent.append(clean_title(e))
             continue
         file_url = e.get("url")
         if not is_http(e):
@@ -597,10 +653,13 @@ def handle(msg):
             headers["Cookie"] = e["cookies"]
         ext = e.get("ext")
         # Plain file links come back as "unknown_video": let Motrix keep the real name.
-        out = None if ext in (None, "unknown_video") else safe_name(e.get("title")) + "." + ext
-        wait_available(e)
-        add_to_motrix(file_url, out, headers, media=out is not None)
-        sent.append(e.get("title") or "file")
+        if ext in (None, "unknown_video"):
+            add_to_motrix(file_url)  # plain file link: let Motrix keep the real name
+        else:
+            codec = codec_name(e.get("vcodec")) if has(e, "vcodec") else "H.264"
+            needs = convert if mode == "best" and codec not in ("H.264", "H.265") else ""
+            send_single(clean_title(e), e, needs)
+        sent.append(clean_title(e))
     if fallback and not sent:
         return {"ok": True, "message": "This one is a stream Motrix can't take. " + download_with_ytdlp(url, cookies)}
     if not sent:
